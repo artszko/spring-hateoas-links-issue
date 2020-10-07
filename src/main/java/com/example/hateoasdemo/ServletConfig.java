@@ -15,20 +15,17 @@ import javax.servlet.ServletRegistration;
 
 @Configuration
 @EnableWebMvc
-@ImportAutoConfiguration({
-        ServletWebServerFactoryAutoConfiguration.class,
-})
+@ImportAutoConfiguration(ServletWebServerFactoryAutoConfiguration.class)
 public class ServletConfig implements WebMvcConfigurer {
 
     @Bean
     public ServletContextInitializer servletContextInitializer() {
         return servletContext -> {
-            // REST v1 servlet
-            AnnotationConfigWebApplicationContext restContextV2 = new AnnotationConfigWebApplicationContext();
-            restContextV2.register(RestConfig.class);
-            ServletRegistration.Dynamic restServletV2 = servletContext.addServlet("rest", new DispatcherServlet(restContextV2));
-            restServletV2.setLoadOnStartup(1);
-            restServletV2.addMapping("/rest/v1/*");
+            AnnotationConfigWebApplicationContext restCtx = new AnnotationConfigWebApplicationContext();
+            restCtx.register(RestConfig.class);
+            ServletRegistration.Dynamic restServletReg = servletContext.addServlet("rest", new DispatcherServlet(restCtx));
+            restServletReg.setLoadOnStartup(1);
+            restServletReg.addMapping("/rest/v1/*");
         };
     }
 
